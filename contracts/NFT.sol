@@ -30,7 +30,6 @@ contract NFT is ERC721Enumerable, Ownable {
     mapping(address => Vote) public votes;
     uint256 public likeCount = 0;
     uint256 public dislikeCount = 0;
-    
 
     constructor(
         string memory _name,
