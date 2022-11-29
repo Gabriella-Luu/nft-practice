@@ -9,24 +9,12 @@ const gas = 450000
 
 const main = async () => {
     const [account] = await web3.eth.getAccounts()
-
     const baseCost = await nftContract.methods.cost().call()
-
-    console.log(`Base cost of minting  | ${web3.utils.fromWei(baseCost.toString(), 'ether')}`)
-    console.log(`Gas fee: ${gas}\n`)
-
     console.log(`Attempting to mint NFT...\n`)
-
     await nftContract.methods.mint().send({ from: account, value: baseCost, gas: gas })
-
     const totalMinted = await nftContract.methods.walletOfOwner(account).call()
-
-    console.log(`Total NFTs minted: ${totalMinted.length}\n`)
-
-    for (var i = 0; i < totalMinted.length; i++) {
-        const uri = await nftContract.methods.tokenURI(totalMinted[i]).call()
-        console.log(`Metadata URI for token ${totalMinted[i]}: ${uri}`)
-    }
+    const uri = await nftContract.methods.tokenURI(totalMinted[0]).call()
+    console.log(`Metadata URI for token: ${uri}\n`)
 }
 
 main()

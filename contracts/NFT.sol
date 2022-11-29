@@ -40,12 +40,10 @@ contract NFT is ERC721Enumerable, Ownable {
         setBaseURI(_initBaseURI);
     }
 
-    // internal
-    function _baseURI() internal view virtual override returns (string memory) {
-        return baseURI;
+    function setBaseURI(string memory _newBaseURI) public onlyOwner {
+        baseURI = _newBaseURI;
     }
 
-    // public
     function mint() public payable {
         uint256 supply = totalSupply();
 
@@ -56,7 +54,36 @@ contract NFT is ERC721Enumerable, Ownable {
         _safeMint(msg.sender, supply + 1);
     }
 
-    function walletOfOwner(address _owner)
+    function like() public {
+        require(votes[msg.sender] == Vote.NO_VOTE);
+        votes[msg.sender] = Vote.LIKE;
+        likeCount += 1;
+    }    
+
+    function deleteLike() public {
+        require(votes[msg.sender] == Vote.LIKE);
+        votes[msg.sender] = Vote.NO_VOTE;
+        likeCount -= 1;
+    }
+    
+    function dislike() public {
+        require(votes[msg.sender] == Vote.NO_VOTE);
+        votes[msg.sender] = Vote.DISLIKE;
+        dislikeCount += 1;
+    }
+
+    function deleteDislike() public {
+        require(votes[msg.sender] == Vote.DISLIKE);
+        votes[msg.sender] = Vote.NO_VOTE;
+        dislikeCount -= 1;
+    }
+
+    // internal
+    function _baseURI() internal view virtual override returns (string memory) {
+        return baseURI;
+    }
+
+     function walletOfOwner(address _owner)
         public
         view
         returns (uint256[] memory)
@@ -97,34 +124,6 @@ contract NFT is ERC721Enumerable, Ownable {
     // Only owner
     function setCost(uint256 _newCost) public onlyOwner {
         cost = _newCost;
-    }
-
-    function setBaseURI(string memory _newBaseURI) public onlyOwner {
-        baseURI = _newBaseURI;
-    }
-
-    function like() public {
-        require(votes[msg.sender] == Vote.NO_VOTE);
-        votes[msg.sender] = Vote.LIKE;
-        likeCount += 1;
-    }    
-
-    function deleteLike() public {
-        require(votes[msg.sender] == Vote.LIKE);
-        votes[msg.sender] = Vote.NO_VOTE;
-        likeCount -= 1;
-    }
-    
-    function dislike() public {
-        require(votes[msg.sender] == Vote.NO_VOTE);
-        votes[msg.sender] = Vote.DISLIKE;
-        dislikeCount += 1;
-    }
-
-    function deleteDislike() public {
-        require(votes[msg.sender] == Vote.DISLIKE);
-        votes[msg.sender] = Vote.NO_VOTE;
-        dislikeCount -= 1;
     }
 
     function withdraw() public payable onlyOwner {
