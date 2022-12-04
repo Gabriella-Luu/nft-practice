@@ -7,14 +7,12 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
-
 contract NFT is ERC721,  ERC721Enumerable, ERC721URIStorage  {
     
     using Strings for uint256;
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
     address private owner;
-    // Optional mapping for token URIs
     mapping (uint256 => string) private _tokenURIs;
     
     // Base URI
@@ -27,8 +25,8 @@ contract NFT is ERC721,  ERC721Enumerable, ERC721URIStorage  {
         DISLIKE
     }
     mapping(uint256 => mapping(address => Vote)) public votes;
-    mapping(uint256 => uint256) likeCount;
-    mapping(uint256 => uint256) dislikeCount;
+    mapping(uint256 => uint256) public likeCount;
+    mapping(uint256 => uint256) public dislikeCount;
 
     constructor(
         string memory _name,
@@ -138,35 +136,32 @@ contract NFT is ERC721,  ERC721Enumerable, ERC721URIStorage  {
         }
         return tokenIds;
     }
-    function like(address sender, uint256 tokenId) public {
+    function like(address sender, uint256 tokenId) public returns (uint256){
         require(votes[tokenId][sender] == Vote.NO_VOTE);
         votes[tokenId][sender] = Vote.LIKE;
-        likeCount[tokenId] += 1;
+        likeCount[tokenId] = likeCount[tokenId] + 1;
+        return likeCount[tokenId];
     }    
 
-    function deleteLike(address sender, uint256 tokenId) public {
+    function deleteLike(address sender, uint256 tokenId) public returns (uint256) {
         require(votes[tokenId][sender] == Vote.LIKE);
         votes[tokenId][sender] = Vote.NO_VOTE;
         likeCount[tokenId] -= 1;
+        return likeCount[tokenId];
     }
     
-    function dislike(address sender, uint256 tokenId) public {
+    function dislike(address sender, uint256 tokenId) public returns (uint256) {
         require(votes[tokenId][sender] == Vote.NO_VOTE);
         votes[tokenId][sender] = Vote.DISLIKE;
-        dislikeCount[tokenId] += 1;
+        dislikeCount[tokenId] += 1;        
+        return dislikeCount[tokenId];
     }
 
-    function deleteDislike(address sender, uint256 tokenId) public {
+    function deleteDislike(address sender, uint256 tokenId) public returns (uint256) {
         require(votes[tokenId][sender] == Vote.DISLIKE);
         votes[tokenId][sender] = Vote.NO_VOTE;
-        dislikeCount[tokenId] -= 1;
+        dislikeCount[tokenId] -= 1;        
+        return dislikeCount[tokenId];
     }
 
-    function getLikeCount(uint256 tokenId) public view returns (uint256) {
-        return likeCount[tokenId];       
-    }    
-    
-    function getDislikeCount(uint256 tokenId) public view returns (uint256) {
-        return dislikeCount[tokenId];       
-    }
 }
