@@ -44,17 +44,17 @@ const main = async () => {
     count = await nftContract.methods.dislike(allAccount[1], 3).call()
     console.log(`account 0 likes token 3, total likes: ${count}`)
 
-    // for (var j = 0; j < allAccount.length; j++){
-    //     const totalMinted = await nftContract.methods.walletOfOwner(allAccount[j]).call()
-    //     console.log(`Total NFTs minted for account ${j}: ${totalMinted.length}`)
-    //     for (var i = 0; i < totalMinted.length; i++) {
-    //         const likes = await nftContract.methods.likeCount(totalMinted[i]).call()
-    //         const dislikes = await nftContract.methods.dislikeCount(totalMinted[i]).call()
-    //         console.log(`likes for token ${totalMinted[i]}\t: ${likes}`)
-    //         console.log(`dislikes for token ${totalMinted[i]}\t: ${dislikes}`)
-    //     }
-    //     console.log(`\n`)
-    // }
+    for (var j = 0; j < allAccount.length; j++){
+        const totalMinted = await nftContract.methods.walletOfOwner(allAccount[j]).call()
+        console.log(`Total NFTs minted for account ${j}: ${totalMinted.length}`)
+        for (var i = 0; i < totalMinted.length; i++) {
+            const likes = await nftContract.methods.likeCount(totalMinted[i]).call()
+            const dislikes = await nftContract.methods.dislikeCount(totalMinted[i]).call()
+            console.log(`likes for token ${totalMinted[i]}\t: ${likes}`)
+            console.log(`dislikes for token ${totalMinted[i]}\t: ${dislikes}`)
+        }
+        console.log(`\n`)
+    }
 }
 
 main()
