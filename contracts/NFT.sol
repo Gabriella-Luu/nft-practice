@@ -14,9 +14,7 @@ contract NFT is ERC721Enumerable  {
     Counters.Counter private _tokenIds;
     address private owner;
     mapping (uint256 => string) private _tokenURIs;
-    
-    // Base URI
-    string private _baseURIextended;
+    uint256 public unitValue = 1 ether;
 
     // vote
     enum Vote {
@@ -38,10 +36,6 @@ contract NFT is ERC721Enumerable  {
     function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal virtual {
         require(_exists(tokenId), "ERC721Metadata: URI set of nonexistent token");
         _tokenURIs[tokenId] = _tokenURI;
-    }
-    
-    function _baseURI() internal view virtual override returns (string memory) {
-        return _baseURIextended;
     }
     
     function tokenURI(uint256 tokenId) public view virtual override(ERC721) returns (string memory) {
@@ -74,6 +68,16 @@ contract NFT is ERC721Enumerable  {
         return newItemId;
     }
 
+    function transNFT(
+        address _to,
+        uint256 tokenId
+	) 
+        public returns (uint256) {
+        require(msg.sender == ownerOf(tokenId),"Only the owner of this Token could transfer It!");
+        transferFrom(msg.sender,_to,tokenId);
+	    return tokenId;
+    }
+
     function wallet()
         public
         view
@@ -86,6 +90,7 @@ contract NFT is ERC721Enumerable  {
         }
         return tokenIds;
     }
+
     function like(uint256 tokenId) public {
         require(votes[tokenId][msg.sender] == Vote.NO_VOTE);
         votes[tokenId][msg.sender] = Vote.LIKE;
@@ -108,6 +113,11 @@ contract NFT is ERC721Enumerable  {
         require(votes[tokenId][msg.sender] == Vote.DISLIKE);
         votes[tokenId][msg.sender] = Vote.NO_VOTE;
         dislikeCount[tokenId] -= 1;
+    }
+
+    function getValue(uint256 tokenId) public view returns (uint256) {
+        require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
+        return (likeCount[tokenId] - dislikeCount[tokenId] > 0) ? (likeCount[tokenId] - dislikeCount[tokenId]) * unitValue : 0;
     }
 
 }
