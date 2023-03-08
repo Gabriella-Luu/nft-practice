@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.1;
 
-import "../../node_modules/@openzeppelin/contracts/utils/structs/DoubleEndedQueue.sol";
+import "../lib/TakeANumber.sol";
 
 contract TicketingStorage {
+    using TakeANumber for TakeANumber.Queue;
+
     enum TicketAbility {
         Returnable, // can be returned, resold and granted
         Resellable, // can be resold and granted
@@ -38,7 +40,7 @@ contract TicketingStorage {
     }
     
     // individualized ticket info
-    struct LTInfo {
+    struct LIFEInfo {
         uint256 ticketId;
         TicketStatus status;
         uint priceCap; // return price or resale price should be lower than priceCap
@@ -52,21 +54,13 @@ contract TicketingStorage {
     // Mapping from EventId to EventInfo (like a list)
     mapping(uint256 => TicketInfo) public TicketList;
 
-    // // Mapping from organizer address to EventId
-    // mapping(address => uint256) public OrganizerEventMap;
-
-    // // Mapping from EventId to TicketId list
-    // mapping(uint256 => uint256[]) public EventTicketMap;
-
     // Mapping from TicketId to remaining tickets num
     mapping(uint256 => uint) public RemainingTicketsNumMap;
 
-    // mapping from TicketId to to-be-resold LTId queue
-    mapping(uint256 => DoubleEndedQueue.Bytes32Deque) public ToBeResoldTicketsMap;
+    // mapping from TicketId to to-be-resold LIFEId queue
+    mapping(uint256 => TakeANumber.Queue) internal ToBeResoldTicketsMap;
 
-    // mapping from LTId to LT info
-    mapping(uint256 => LTInfo) private LTInfoMap;
-
-    
+    // mapping from LIFEId to LIFE info
+    mapping(uint256 => LIFEInfo) internal LIFEInfoMap;
 
 }

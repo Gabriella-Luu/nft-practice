@@ -51,29 +51,31 @@ contract EventManagement is IEventManagement, TicketingStorage{
     /**
      * @dev See {IEventManagement-getRemainingTicketNum}
      */
-    function getRemainingTicketNum(uint256 ticketId) external view returns (uint num) {
+    function getRemainingTicketNum(uint256 ticketId) external view returns (uint) {
         require(TicketList[ticketId].eventId != 0,  "Ticket doesn't exist");
 
         return RemainingTicketsNumMap[ticketId];
     }
 
     /**
-     * @dev Converts string to enum TicketAbility, returns ticket ability and if it matchs one of four ability names.
+     * @dev See {IEventManagement-getSoldTicketNum}
      */
-    function _getTicketAbility(string memory ability_string) internal pure returns (TicketAbility, bool) {
-        if (_strcmp(ability_string, "Returnable")) return (TicketAbility.Returnable, true);
-        if (_strcmp(ability_string, "Resellable")) return (TicketAbility.Resellable, true);
-        if (_strcmp(ability_string, "Grantable")) return (TicketAbility.Grantable, true);
-        if (_strcmp(ability_string, "Untransferable")) return (TicketAbility.Untransferable, true);
-        return (_, false);
+    function getSoldTicketNum(uint256 ticketId) external view returns (uint) {
+        require(TicketList[ticketId].eventId != 0,  "Ticket doesn't exist");
+
+        return TicketList[ticketId].sum 
+             - RemainingTicketsNumMap[ticketId] 
+             + TakeANumber.length(ToBeResoldTicketsMap[ticketId]);
     }
 
     /**
-     * @dev compare two strings
+     * @dev Converts string to enum TicketAbility, returns ticket ability and if it matchs one of four ability names.
      */
-    function _strcmp(string memory a, string memory b) internal pure returns (bool) {
-        bytes32 hashA = keccak256(abi.encode(a));
-        bytes32 hashB = keccak256(abi.encode(b));
-        return hashA == hashB;
+    function _getTicketAbility(string memory ability_string) internal pure returns (TicketAbility, bool) {
+        if (Strings.equal(ability_string, "Returnable")) return (TicketAbility.Returnable, true);
+        if (Strings.equal(ability_string, "Resellable")) return (TicketAbility.Resellable, true);
+        if (Strings.equal(ability_string, "Grantable")) return (TicketAbility.Grantable, true);
+        if (Strings.equal(ability_string, "Untransferable")) return (TicketAbility.Untransferable, true);
+        return (_, false);
     }
 }

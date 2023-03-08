@@ -3,15 +3,15 @@ pragma solidity ^0.8.1;
 
 interface IEventManagement {
 
-   /**
-    * @dev create and event.
-    * 
-    * Requirements:
-    * 
-    * - `eventId` cannot already exist.
-    * - `organizer` cannot be zero address.
-    * - `startTime` cannot be bigger than `endTime`.
-    */
+    /**
+     * @dev create and event.
+     * 
+     * Requirements:
+     * 
+     * - `eventId` cannot already exist.
+     * - `organizer` cannot be zero address.
+     * - `startTime` cannot be bigger than `endTime`.
+     */
     function createEvent(
         uint256 eventId,
         uint startTime,
@@ -44,6 +44,16 @@ interface IEventManagement {
      * 
      * - `ticketId` should exist.
      */
-    function getRemainingTicketNum(uint256 ticketId) external view returns (uint num);
+    function getRemainingTicketNum(uint256 ticketId) external view returns (uint);
     
+
+    /**
+     * @dev Returns number of really sold tickets of a typical kind of ticket.
+     * 
+     * Requirements:
+     * 
+     * - `ticketId` should exist.     
+     */
+    function getSoldTicketNum(uint256 ticketId) external view returns (uint);
+
 }
